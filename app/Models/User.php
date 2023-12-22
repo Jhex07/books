@@ -42,8 +42,8 @@ class User extends Authenticatable
 
 
     protected $casts = [
-        'createad_at' => 'datetime=Y-m-d',
-        'updated_at' => 'datetime=Y-m-d'
+        'created_at' => 'datetime:Y-m-d',
+        'updated_at' => 'datetime:Y-m-d'
         // 'is_enable' => 'boolean' //0-1:true, false
     ];
 
