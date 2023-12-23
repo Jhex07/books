@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Requests\Author\AuthorRequest;
 
 class AuthorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $authors = Author::get();
+        if (!$request->ajax()){
+            return view();
+        }
+        return response()->json(['authors'=>$authors], 200);
     }
 
 
@@ -18,15 +24,24 @@ class AuthorController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(AuthorRequest $request)
     {
-        //
+        $author = new Author($request->all());
+        $author->save();
+        if(!$request->ajax()){
+            return back()->with('success', 'Author created');
+        }
+        return response()->json(['status'=> 'Author created', 'author' => $author], 201);
     }
 
 
-    public function show($id)
+    public function show(Request
+    $request, Author $author)
     {
-        //
+        if(!$request->ajax()){
+            return view();
+        }
+        return response()->json(['author' => $author], 200);
     }
 
 
@@ -35,14 +50,22 @@ class AuthorController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(AuthorRequest $request, Author $author)
     {
-        //
+        $author -> update($request->all());
+        if(!$request->ajax()){
+            return back()->with('success', 'Author update');
+        }
+        return response()->json([], 204);
     }
 
 
-    public function destroy($id)
+    public function destroy(Request $request, Author $author)
     {
-        //
+        $author -> delete();
+        if(!$request->ajax()){
+            return back()->with('success', 'Author delete');
+        }
+        return response()->json([], 204);
     }
 }
