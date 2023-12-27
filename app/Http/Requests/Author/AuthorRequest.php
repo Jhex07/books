@@ -21,11 +21,11 @@ class AuthorRequest extends FormRequest
 
         if ($this->method() == 'POST'){
             array_push($rules['name'], 'unique:authors,name');
-            array_push($rules['biography'], 'unique:authors, biography');
+            array_push($rules['biography'], 'unique:authors,biography');
         }
         else{
-        array_push($rules['name'], 'unique:authors,name,' .$this->authors->id);
-        array_push($rules['biography'], 'unique:authors,biography,' .$this->authors->id);
+        array_push($rules['name'], 'unique:authors,name,' .$this->author->id);
+        array_push($rules['biography'], 'unique:authors,biography,' .$this->author->id);
         }
 
         return $rules;
