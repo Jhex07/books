@@ -47,9 +47,20 @@
                             </a>
 
                             @role('admin')
-                            {{-- Logout --}}
                             <a class="dropdown-item" href="{{ route('users.index') }}">
                                 Usuarios
+                            </a>
+                            @endrole
+
+                            @role('admin|librarian')
+                            <a class="dropdown-item" href="{{ route('books.index') }}">
+                                Libros
+                            </a>
+                            @endrole
+
+                            @can('categories.index')
+                            <a class="dropdown-item" href="{{ route('categories.index') }}">
+                                Categorias
                             </a>
                             @endrole
 

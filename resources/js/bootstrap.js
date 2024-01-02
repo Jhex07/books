@@ -4,6 +4,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import jquery from 'jquery'
 import 'datatables.net-bs5'
+import '@fortawesome/fontawesome-free/js/all.js'
 
 window.$ = jquery
 window._ = _
