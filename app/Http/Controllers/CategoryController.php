@@ -11,16 +11,16 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $categories = Category::get();
-        if (!$request->ajax()){
+        if(!$request->ajax()){
             return view();
         }
-        return response()->json(['categories'=>$categories], 200);
+        return response()->json(['categories'=> $categories], 200);
     }
 
 
-    public function create()
+    public function create(Request $request)
     {
-        //
+
     }
 
 

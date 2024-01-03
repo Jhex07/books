@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Book\BookRequest;
 use App\Models\Book;
+use App\Models\Author;
 use Illuminate\Http\Request;
+use App\Http\Requests\Book\BookRequest;
 
 class BookController extends Controller
 {
@@ -16,8 +17,10 @@ class BookController extends Controller
 
     public function index()
     {
+
+        $authors = Author::get();
         $books = Book::with('author', 'category')->get();
-        return view('books.index', compact('books'));
+        return view('books.index', compact('books', 'authors'));
     }
 
 
