@@ -9,6 +9,7 @@ import { createApp } from 'vue';
 import vSelect from 'vue-select';
 
 import TheBookList from './components/Books/TheBookList.vue'
+import BackendError from './components/Components/BackendError.vue'
 
 const app = createApp({
     components: {
@@ -18,4 +19,5 @@ const app = createApp({
 
 
 app.component('v-select', vSelect)
+app.component('backend-error', BackendError)
 app.mount('#app');

@@ -15,28 +15,29 @@ class BookRequest extends FormRequest
 
     public function rules()
     {
-        $rules = [
+        return [
             'title' => ['required', 'string'],
             'stock' => ['required', 'numeric'],
             'description' => ['required', 'string'],
-            'category_id' => ['required', 'numeric'],
-            'author_id' => ['required', 'numeric'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'author_id' => ['required', 'exists:authors,id'],
         ];
+    }
 
-        if ($this->method() == 'POST'){
-            array_push($rules['title'], 'unique:books,title');
-            array_push($rules['stock'], 'required');
-            array_push($rules['description'], 'required');
-            array_push($rules['category_id'], 'required');
-            array_push($rules['author_id'], 'required');
-        }else {
-            array_push($rules['title'], 'unique:books,title,' .$this->book->id);
-            array_push($rules['stock'], 'required');
-            array_push($rules['description'], 'required');
-            array_push($rules['category_id'], 'required');
-            array_push($rules['author_id'], 'required');
-        }
-
-        return $rules;
+    public function messages()
+    {
+        return [
+            'title.required' => 'El titulo es requerido.',
+            'title.string' => 'El nombre debe de ser valido.',
+            'description.required' => 'La descripcion es requerida.',
+            'description.string' => 'La descripcion debe de ser valida.',
+            'stock.required' => 'La cantidad es requerida.',
+            'stock.numeric' => 'La cantidad debe de ser un numero valido.',
+            'author_id.required' => 'El autor es requerido.',
+            'author_id.exists' => 'El autor no existe.',
+            'category_id.required' => 'La categoria es requerida."',
+            'category_id.exists' => 'La categoria no existe.'
+        ];
     }
 }
+

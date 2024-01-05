@@ -23,7 +23,14 @@
                                 <td>{{book.category.name}}</td>
                                 <td>{{book.stock}}</td>
                                 <td>
-                                    <button class="btn btn-primary">Hola</button>
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" class="btn btn-warning btn-sm" title="editar" @click="editBook(book)">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-sm ms-1" title="eliminar" @click="deleteBook(book)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -32,7 +39,7 @@
             </div>
         </div>
         <div>
-             <book-modal :authors_data="authors_data"/>
+             <book-modal :authors_data="authors_data" :book_data="book" ref="book_modal"/>
         </div>
     </section>
 </template>
@@ -40,6 +47,7 @@
 <script>
 
     import BookModal from "./BookModal.vue";
+    import {deleteMessage, successMessage} from '@/helpers/Alerts.js'
     export default {
         components:{
             BookModal
@@ -48,7 +56,7 @@
         data() {
             return{
                 modal: null,
-                book: null
+                book: {}
             }
         },
         mounted(){
@@ -59,12 +67,24 @@
                 $('#book_table').DataTable()
                 const modal_id = document.getElementById('book_modal')
                 this.modal = new bootstrap.Modal(modal_id)
-
-
                 modal_id.addEventListener('hidden.bs.modal', e =>{
-                    alert('hola')
-                    // this.$refs.book_modal.reset()
+                    this.$refs.book_modal.reset()
                 })
+            },
+            async deleteBook({id}){
+                if (!await deleteMessage()){
+                    return
+                }
+                try{
+                    await axios.delete(`/books/${id}`)
+                    await successMessage({is_delete: true, reload: true})
+                }catch(error){
+                    console.error(error);
+                }
+            },
+            editBook(book){
+                this.book = book
+                this.openModal()
             },
             openModal(){
                 this.modal.show()
