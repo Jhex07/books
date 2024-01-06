@@ -13,6 +13,22 @@
                 <Form @submit="saveBook" :validation-schema="schema" ref="form">
                     <div class="modal-body">
                         <section class="row">
+
+
+                            <!--image-->
+                            <div class="col-12 d-flex justify-content-center mt-1">
+                                <img :src="image_preview" alt="Imagen Libro" class="img-thumbnail" width="170" height="170">
+                            </div>
+
+                            <!--load image-->
+                            <div class="col-12 mt-1">
+                                <label for="file" class="form-label">Imagen</label>
+                                <input type="file" :class="`form-control ${back_errors['file'] ? 'is-invalid' : ''}`"
+                                    id="file" accent="image/*" @change="previewImage">
+                                <span class="invalid-feedback" v-if="back_errors['file']">
+                                    {{back_errors['file']}}
+                                </span>
+                            </div>
                             <!--Title-->
                             <div class="col-12">
                                 <label for="title">Titulo</label>
@@ -29,8 +45,9 @@
                                 <Field name="stock" v-slot="{ errorMessage, field }" v-model="book.stock">
                                     <label for="stock">Cantidad</label>
                                     <input type="number" id="stock" v-model="book.stock" :class="`form-control
-                                        ${errorMessage ? 'is-invalid' : ''}`" v-bind="field">
+                                        ${errorMessage || back_errors ['stock'] ? 'is-invalid' : ''}`" v-bind="field">
                                     <span class="invalid-feedback">{{ errorMessage }}</span>
+                                    <span class="invalid-feedback">{{back_errors['stock']}}</span>
                                 </Field>
                             </div>
 
@@ -38,10 +55,9 @@
                             <div class="col-12 mt-2">
                                 <Field name="description" v-slot="{ errorMessage, field }" v-model="book.description">
                                     <label for="description">Descripcion</label>
-                                    <textarea v-model="book.description" :class="`form-control ${errorMessage ? 'is-invalid'
-                                        : ''}`" id="description"
-                                        rows="3" v-bind="field"></textarea>
+                                    <textarea v-model="book.description" :class="`form-control ${errorMessage || back_errors ['description'] ? 'is-invalid': ''}`" id="description" rows="3" v-bind="field"></textarea>
                                     <span class="invalid-feedback">{{ errorMessage }}</span>
+                                    <span class="invalid-feedback">{{back_errors['description']}}</span>
                                 </Field>
                             </div>
 
@@ -52,9 +68,10 @@
                                     <label for="author">Autor</label>
                                     <v-select :options="authors_data" label="name" v-model="author"
                                         :reduce="author => author.id" v-bind="field" placeholder="Seleccione autor"
-                                        :clearable="false" :class="`${errorMessage ? 'is-invalid' : ''}`">
+                                        :clearable="false" :class="`${errorMessage || back_errors ['author'] ? 'is-invalid' : ''}`">
                                     </v-select>
                                     <span class="invalid-feedback">{{ errorMessage }}</span>
+                                    <span class="invalid-feedback">{{back_errors['author']}}</span>
                                 </Field>
                             </div>
 
@@ -63,11 +80,9 @@
                             <div class="col-12 mt-2" v-if="load_category">
                                 <Field name="category" v-slot="{ errorMessage, field, valid }" v-model="category">
                                     <label for="category">Categoria</label>
-
                                     <v-select id="category" :options="categories_data" v-model="category"
                                         :reduce="category => category.id" v-bind="field" label="name"
-                                        placeholder="Selecciona categoria" :clearable="false"
-                                        :class="`${errorMessage ? 'is-invalid' : ''}`">
+                                        placeholder="Selecciona categoria" :clearable="false" :class="`${errorMessage || back_errors ['category'] ? 'is-invalid' : ''}`">
                                     </v-select>
                                     <span class="invalid-feedback" v-if="!valid">{{ errorMessage }}</span>
 
@@ -103,17 +118,18 @@ import {successMessage, handlerErrors} from '@/helpers/Alerts.js'
                     this.is_create = false
                     this.author = this.book.author_id
                     this.category = this.book.category_id
+                    this.image_preview = this.book.file.route
                 }
             }
         },
         computed: {
             schema() {
                 return yup.object({
-                    title: yup.string().required(),
-                    stock: yup.number().required().positive().integer(),
-                    description: yup.string(),
-                    author: yup.string().required(),
-                    category: yup.string().required()
+                    // title: yup.string().required(),
+                    // stock: yup.number().required().positive().integer(),
+                    // description: yup.string(),
+                    // author: yup.string().required(),
+                    // category: yup.string().required()
                 });
             },
         },
@@ -125,7 +141,9 @@ import {successMessage, handlerErrors} from '@/helpers/Alerts.js'
                 category: null,
                 categories_data: [],
                 load_category: false,
-                back_errors: {}
+                back_errors: {},
+                file: null,
+                image_preview: '/storage/images/books/default.png'
             }
         },
         created() {
@@ -135,17 +153,31 @@ import {successMessage, handlerErrors} from '@/helpers/Alerts.js'
             index() {
                 this.getCategories()
             },
+            previewImage(envent){
+                this.file = envent.target.files[0]
+                this.image_preview = URL.createObjectURL(this.file)
+            },
             async saveBook(){
                 try{
                     this.book.category_id = this.category
                     this.book.author_id = this.author
-                    if (this.is_create) await axios.post('/books', this.book)
-                    else await axios.put(`/books/${this.book.id}`, this.book)
+                    const book = this.createFormData(this.book)
+                    if (this.is_create) await axios.post('/books/store', book)
+                    else await axios.post(`/books/update/${this.book.id}`, book)
                     await successMessage({reload: true })
                 }  catch(error) {
                     this.back_errors = await handlerErrors(error)
                 }
             },
+            createFormData(data){
+                const  form_data = new FormData()
+                if(this.file) form_data.append('file', this.file, this.file.name)
+                for (const prop in data) {
+                    form_data.append(prop, data[prop])
+                }
+                return form_data
+            },
+
             async getCategories(){
                 try{
                     const {data: {categories}} = await axios.get('/categories/get-all')
@@ -163,6 +195,9 @@ import {successMessage, handlerErrors} from '@/helpers/Alerts.js'
                 this.load_category = false
                 this.$parent.book = {}
                 this.back_errors = {}
+                this.file = null
+                this.image_preview = '/storage/images/books/default.png'
+                document.getElementById('file').value = ''
                 setTimeout(() => this.$refs.form.resetForm(), 100);
 
             }

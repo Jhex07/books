@@ -23,7 +23,7 @@ export const handlerErrors = async error => {
 		case 404:
 			options = {
 				icon: 'error',
-				title: 'error: URL no encontrada.',
+				title: 'error: URL no encontrada',
 				text: 'intenta utilizar otra URL'
 			}
 			break
