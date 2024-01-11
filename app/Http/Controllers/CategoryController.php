@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\Category\CategoryRequest;
 
 class CategoryController extends Controller
@@ -12,15 +13,15 @@ class CategoryController extends Controller
     {
         $categories = Category::get();
         if(!$request->ajax()){
-            return view();
+            return view('categories.index');
         }
         return response()->json(['categories'=> $categories], 200);
     }
 
 
-    public function create(Request $request)
-    {
-
+    public function getAll(){
+        $categories = Category::query();
+        return DataTables::of($categories)->toJson();
     }
 
 

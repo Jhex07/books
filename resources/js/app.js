@@ -10,10 +10,12 @@ import vSelect from 'vue-select';
 
 import TheBookList from './components/Books/TheBookList.vue'
 import BackendError from './components/Components/BackendError.vue'
+import TheCategoryList from './components/Category/TheCategoryList.vue'
 
 const app = createApp({
     components: {
-        TheBookList
+        TheBookList,
+        TheCategoryList
     }
 });
 

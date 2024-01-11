@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSRF Token -->
+    <!--csrf token-->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Title --}}
+    {{--title--}}
     <title>{{ env('APP_NAME') }} | {{ $title ?? 'Libros' }}</title>
 
     <!-- Scripts -->
@@ -17,10 +17,10 @@
 
 <body class="bg-">
 
-    {{-- Menu --}}
+    {{--menu--}}
     <x-menu />
 
-    {{-- Content --}}
+    {{--content--}}
     <main id="app">
         <div class="container mt-4">
             <x-alerts />
