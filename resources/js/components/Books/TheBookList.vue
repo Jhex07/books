@@ -9,18 +9,22 @@
                     <table class="table table-bordered" id="book_table">
                         <thead>
                         <tr>
+                            <th>Imagen</th>
                             <th>Titulo</th>
                             <th>Autor</th>
-                            <th>Categorias</th>
                             <th>Cantidad</th>
                             <th>Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(book, index) in books" :key="index">
+                                <td>
+                                    <div class="d-flex justify-content-center">
+                                        <img :src="book.file.route" alt="Imagen Libro" class="img-thumbnail" width="40" height="40">
+                                    </div>
+							    </td>
                                 <td>{{book.title}}</td>
                                 <td>{{book.author.name}}</td>
-                                <td>{{book.category.name}}</td>
                                 <td>{{book.stock}}</td>
                                 <td>
                                     <div class="d-flex justify-content-center">
@@ -39,7 +43,7 @@
             </div>
         </div>
         <div>
-             <book-modal :authors_data="authors_data" :book_data="book" ref="book_modal"/>
+             <book-modal ref="book_modal" :book_data="book" :categories_data="categories" :authors_data="authors" />
         </div>
     </section>
 </template>
